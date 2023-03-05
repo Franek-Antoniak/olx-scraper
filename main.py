@@ -85,7 +85,3 @@ while True:
     to_index = int(input())
     for i in range(from_index, to_index):
         webbrowser.open_new_tab(links[i].link)
-    print("Do you want to open more offers? (y/n)")
-    answer = input()
-    if answer == 'n':
-        break

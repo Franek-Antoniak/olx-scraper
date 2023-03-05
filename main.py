@@ -66,7 +66,7 @@ while True:
     page_name = 'Page ' + str(page_number + 1)
     page_number += 1
     next_page = soup.find('a', attrs={'data-cy': "pagination-forward"})
-    if next_page is None:
+    if next_page is None or page_number > 14:
         break
     print("Going to next page " + page_name)
     # jeżeli jest następna strona to pobierz ją i przejdź do następnej iteracji pętli

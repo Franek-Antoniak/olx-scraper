@@ -65,12 +65,12 @@ while True:
     # sprawdź czy jest następna strona
     page_name = 'Page ' + str(page_number + 1)
     page_number += 1
-    next_page = soup.find('li', attrs={'aria-label': page_name})
+    next_page = soup.find('a', attrs={'data-cy': "pagination-forward"})
     if next_page is None:
         break
     print("Going to next page " + page_name)
     # jeżeli jest następna strona to pobierz ją i przejdź do następnej iteracji pętli
-    next_page_url = prefix + next_page.find('a')['href']
+    next_page_url = prefix + next_page['href']
     page = requests.get(next_page_url)
     soup = BeautifulSoup(page.content, 'html.parser')
 

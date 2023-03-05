@@ -6,6 +6,7 @@ import webbrowser
 # ustawienie adresu strony
 url = input("Enter OLX page url: ")
 prefix = 'https://www.olx.pl'
+max_price = int(input("Enter max price: "))
 # pobranie strony za pomocą requests
 page = requests.get(url)
 
@@ -58,7 +59,7 @@ while True:
         total_price = price + rent
 
         # jeżeli całkowita cena oferty nie przekracza 3200 zł to dodaj link do listy linków
-        if total_price <= 3200:
+        if total_price <= max_price:
             offer = Offer(prefix + link, total_price)
             links.append(offer)
     # sprawdź czy jest następna strona

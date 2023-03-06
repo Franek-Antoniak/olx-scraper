@@ -11,7 +11,12 @@ import webbrowser
 url = input("Enter OLX page url: ")
 max_price = int(input("Enter max price: "))
 # otworzenie przeglądarki i przejście do strony z ofertami
-browser = webdriver.Chrome()
+options = webdriver.ChromeOptions()
+# options.add_argument('--headless')
+options.add_argument('disable-infobars')
+options.add_argument('--disable-extensions')
+options.add_argument('start-maximized')
+browser = webdriver.Chrome(options=options)
 browser.get(url)
 
 
@@ -24,11 +29,21 @@ class Offer:
         return self.link + " " + str(self.full_price)
 
 
-# lista linków do ofert
-links = []
+# lista linków do ofert jako Set
+links = set()
 page_number = 1
 # pętla przechodząca przez wszystkie strony z ofertami
 while True:
+
+
+    # zaakceptuj cookies
+    # onetrust-accept-btn-handler
+    try:
+        accept_cookies = browser.find_element(By.CSS_SELECTOR, 'button[id="onetrust-accept-btn-handler"]')
+        accept_cookies.click()
+    except:
+        print("No cookies to accept")
+        pass
 
     # pobranie wszystkich ofert na danej stronie
     offers = WebDriverWait(browser, 10).until(
@@ -46,6 +61,8 @@ while True:
         # cena oferty
         # otwórz nową kartę i przejdź do oferty
         offer_page = requests.get(link)
+        while offer_page.status_code != 200:
+            offer_page = requests.get(link)
         offer_soup = BeautifulSoup(offer_page.content, 'html.parser')
         price = offer_soup.find('h3', class_='css-ddweki er34gjf0').text
         price = int(price.replace(' zł', '').replace(' ', ''))
@@ -65,8 +82,9 @@ while True:
         # jeżeli całkowita cena oferty nie przekracza 3200 zł to dodaj link do listy linków
         if total_price <= max_price:
             offer = Offer(link, total_price)
-            links.append(offer)
-            print(offer)
+            if offer not in links:
+                links.add(offer)
+                print(offer)
 
     # sprawdź czy jest następna strona
     page_name = 'Page ' + str(page_number + 1)
@@ -81,8 +99,9 @@ while True:
     # jeżeli jest następna strona to pobierz ją i przejdź do następnej iteracji pętli
     next_page.click()
 
-# sort list of offers by price
-links.sort(key=lambda x: x.full_price)
+# sort list of offers by price in descending order
+links = list(links)
+links.sort(key=lambda x: x.full_price, reverse=True)
 
 while True:
     print("There are " + str(len(links)) + " offers")

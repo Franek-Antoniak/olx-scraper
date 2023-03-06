@@ -3,7 +3,7 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from bs4 import BeautifulSoup
 import webbrowser
 
@@ -12,7 +12,7 @@ url = input("Enter OLX page url: ")
 max_price = int(input("Enter max price: "))
 # otworzenie przeglądarki i przejście do strony z ofertami
 options = webdriver.ChromeOptions()
-# options.add_argument('--headless')
+options.add_argument('--headless')
 options.add_argument('disable-infobars')
 options.add_argument('--disable-extensions')
 options.add_argument('start-maximized')
@@ -28,13 +28,41 @@ class Offer:
     def __str__(self):
         return self.link + " " + str(self.full_price)
 
+    def __eq__(self, other):
+        return self.link == other.link and self.full_price == other.full_price
+
+    def __hash__(self):
+        return hash(self.link) + hash(self.full_price)
+
+    def __lt__(self, other):
+        return self.full_price < other.full_price
+
+    def __gt__(self, other):
+        return self.full_price > other.full_price
+
+    def __le__(self, other):
+        return self.full_price <= other.full_price
+
+    def __ge__(self, other):
+        return self.full_price >= other.full_price
+
 
 # lista linków do ofert jako Set
 links = set()
+
+
+def back_up():
+    links_list = list(links)
+    links_list.sort(key=lambda x: x.full_price, reverse=True)
+    # zapisz listę linków do pliku
+    with open('links.txt', 'w') as f:
+        for link_element in links_list:
+            f.write(str(link_element) + '\n')
+
+
 page_number = 1
 # pętla przechodząca przez wszystkie strony z ofertami
 while True:
-
 
     # zaakceptuj cookies
     # onetrust-accept-btn-handler
@@ -47,7 +75,7 @@ while True:
 
     # pobranie wszystkich ofert na danej stronie
     offers = WebDriverWait(browser, 10).until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'div[data-cy="l-card"]')))
+        ec.presence_of_all_elements_located((By.CSS_SELECTOR, 'div[data-cy="l-card"]')))
 
     # dla każdej oferty pobierz link i cenę
     for offer in offers:
@@ -84,8 +112,7 @@ while True:
             offer = Offer(link, total_price)
             if offer not in links:
                 links.add(offer)
-                print(offer)
-
+                back_up()
     # sprawdź czy jest następna strona
     page_name = 'Page ' + str(page_number + 1)
     page_number += 1

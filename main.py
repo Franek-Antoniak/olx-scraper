@@ -91,18 +91,22 @@ while True:
         offer_page = requests.get(link)
         while offer_page.status_code != 200:
             offer_page = requests.get(link)
-        offer_soup = BeautifulSoup(offer_page.content, 'html.parser')
-        price = offer_soup.find('h3', class_='css-ddweki er34gjf0').text
-        price = int(price.replace(' zł', '').replace(' ', ''))
+        try:
+            offer_soup = BeautifulSoup(offer_page.content, 'html.parser')
+            price = offer_soup.find('h3', class_='css-ddweki er34gjf0').text
+            price = int(price.replace(' zł', '').replace(' ', ''))
 
-        # czynsz oferty
-        rent = 0
-        rent_paragraphs = offer_soup.find_all('p', class_='css-b5m1rv er34gjf0')
-        for rent_paragraph in rent_paragraphs:
-            if rent_paragraph.text.startswith('Czynsz (dodatkowo): '):
-                rent = rent_paragraph.text
-                break
-        rent = float(rent.replace('Czynsz (dodatkowo): ', '').replace(' zł', '').replace(' ', '').replace(',', '.'))
+            # czynsz oferty
+            rent = 0
+            rent_paragraphs = offer_soup.find_all('p', class_='css-b5m1rv er34gjf0')
+            for rent_paragraph in rent_paragraphs:
+                if rent_paragraph.text.startswith('Czynsz (dodatkowo): '):
+                    rent = rent_paragraph.text
+                    break
+            rent = float(rent.replace('Czynsz (dodatkowo): ', '').replace(' zł', '').replace(' ', '').replace(',', '.'))
+        except:
+            print("Error while parsing offer " + link)
+            continue
 
         # całkowita cena oferty
         total_price = price + rent

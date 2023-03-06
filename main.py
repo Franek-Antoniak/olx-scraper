@@ -49,6 +49,7 @@ class Offer:
 
 # lista linków do ofert jako Set
 links = set()
+no_more_pages = False
 
 
 def back_up():
@@ -59,6 +60,11 @@ def back_up():
         for link_element in links_list:
             f.write(str(link_element) + '\n')
 
+
+response = requests.get(url + '&page=1000', allow_redirects=False)
+real_last_page_url = "https://www.olx.pl" + response.headers.get('Location')
+
+print(real_last_page_url)
 
 page_number = 1
 # pętla przechodząca przez wszystkie strony z ofertami
@@ -128,19 +134,26 @@ while True:
     print("Going to next page " + page_name)
 
     # jeżeli jest następna strona to pobierz ją i przejdź do następnej iteracji pętli
+    if no_more_pages:
+        break
     next_page.click()
+    if browser.current_url == real_last_page_url:
+        no_more_pages = True
 
 # sort list of offers by price in descending order
 links = list(links)
 links.sort(key=lambda x: x.full_price, reverse=True)
 
 while True:
-    print("There are " + str(len(links)) + " offers")
-    print("Choose range of offers to open in browser")
-    print("From: ")
-    from_index = int(input())
-    print("To: ")
-    to_index = int(input())
+    try:
+        print("There are " + str(len(links)) + " offers")
+        print("Choose range of offers to open in browser")
+        print("From: ")
+        from_index = int(input())
+        print("To: ")
+        to_index = int(input())
 
-    for i in range(from_index, to_index):
-        webbrowser.open_new_tab(links[i].link)
+        for i in range(from_index, to_index):
+            webbrowser.open_new_tab(links[i].link)
+    except:
+        print("Put correct numbers")

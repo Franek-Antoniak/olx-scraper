@@ -1,5 +1,5 @@
 beautifulsoup4==4.12.2
 crochet==2.0.0
-Flask==2.2.3
+Flask==2.3.2
 itemadapter==0.8.0
 Scrapy==2.8.0

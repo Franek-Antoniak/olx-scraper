@@ -1,47 +1,44 @@
 # Sort the data by preference
 # sort_by looks like:
 # {
-#   "price": "asc",
-#   "area": "desc"
+#   "full_price": "asc",
+#   "surface": "desc"
+#   "offer_date": "asc"
 # }
 
 # filters_start looks like:
 # {
 #   "localization": "Warszawa, Mazowieckie, Mokotów",
-#   "area": {
+#   "surface": {
 #       "min": 20,
 #       "max": 50
 #   },
-#   "rooms": {
-#       "min": 1,
-#       "max": 2
-#   },
 #   "furnished": true,
+#   "price" {
+#       "min": 1000,
+#       "max": 2000
+#   },
 # }
 
 # filters_single_page looks like:
 # {
-#   "price": {
+#   "full_price": {
 #       "min": 1000,
 #       "max": 2000
 #   },
-#   "area": {
-#       "min": 20,
-#       "max": 50
-#   },
-#   "rooms": {
-#       "min": 1,
-#       "max": 2
-#   },
-#   "links": {
-#       "not_to_scrape": [
-#           "https://www.olx.pl/oferta/mieszkanie/1",
-#           "https://www.olx.pl/oferta/mieszkanie/2",
-#           "https://www.olx.pl/oferta/mieszkanie/3"
-#       ]
+#   "remove_offers": [
+#       "https://www.olx.pl/oferta/mieszkanie/1",
+#       "https://www.olx.pl/oferta/mieszkanie/2",
+#       "https://www.olx.pl/oferta/mieszkanie/3"
+#   ],
 #   }
 #   "date": {
 #       "min": "2021-01-01",
 #       "max": "2021-01-31"
-#   }
+#   },
+#   "surface": {
+#       "min": 20,
+#       "max": 50
+#   },
+# }
 #
